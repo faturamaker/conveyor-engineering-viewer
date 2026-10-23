@@ -158,7 +158,7 @@ function resetSelection() {
 }
 
 function loadModel() {
-  const modelUrl = `${import.meta.env.BASE_URL}models/roller-assembly.glb.gz.b64`;
+  const modelUrl = `${import.meta.env.BASE_URL}models/roller-assembly.glb.gz.b64?v=2`;
   fetch(modelUrl).then(async (response) => {
     if (!response.ok) throw new Error(`HTTP ${response.status} loading model`);
     const base64 = (await response.text()).trim();
