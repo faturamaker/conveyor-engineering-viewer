@@ -1,54 +1,66 @@
 # Conveyor Engineering Viewer
 
-A runnable, parametric Three.js viewer for a conveyor roller end assembly. The model is generated from editable dimensions and is organized into six selectable components: shell, shaft, bearing pair, sealing, housing, and extended shields. The green shell includes a longitudinal cutaway so the internal red seals and bearing hardware can be inspected, following the provided reference image.
+Browser based Three.js viewer for the roller assembly in `Roller.STEP`. The site uses triangulated component geometry imported from the supplied CAD assembly. The STEP file's component positions already define an orderly one end exploded arrangement; the viewer preserves those positions and provides a slider to interpolate back to the assembled state.
+
+## What is included
+
+- STEP derived geometry grouped into 12 selectable component instances: shell, shaft, two SKF 6205 bearings, two seals, two housings, two SnapRing S25 rings, and two end shields.
+- Orbit, zoom, pan, component selection, visibility toggles, wireframe, and animated exploded assembly slider.
+- CAD sourced dimensions and per-instance mesh envelopes. The original STEP file and any manufacturing tolerances are not included in this public repository.
+- Source converter at `scripts/convert-step.cjs`; generated web model at `public/models/roller-assembly.glb`.
+
+The displayed colors follow the reference visualization. Material names are identified from the STEP assembly where available; this viewer is a visualization tool, not a tolerance qualified manufacturing drawing.
 
 ## Requirements
 
 - Windows 10 or 11
-- Node.js 20.19+ or 22.12+ (required by Vite 7)
+- Node.js 20.19+ or 22.12+
+- npm or pnpm
 - A modern browser with WebGL enabled
 
 ## Run on Windows
 
 1. Extract the project folder and open PowerShell in `conveyor-engineering-viewer`.
-2. Install packages: `npm install`
-3. Start the development server: `npm run dev`
+2. Install dependencies: `npm install` (or `pnpm install`).
+3. Start the viewer: `npm run dev` (or `pnpm dev`).
 4. Open the local URL printed by Vite, usually `http://localhost:5173`.
 
-For a production build, run `npm run build`. To serve that build locally, use `npm run preview`.
+Create and preview a production build with `npm run build` and `npm run preview`.
 
-## Publish with GitHub Pages
+## Regenerate the model from STEP
 
-The repository is prepared for GitHub Actions deployment. Create a new public GitHub repository named `conveyor-engineering-viewer`, upload the project source (including the `.github/workflows/deploy-pages.yml` file), and push it to the `main` branch. In the repository, open **Settings → Pages** and set the build and deployment source to **GitHub Actions**. The included workflow builds the site and publishes it automatically. After the workflow finishes, GitHub Pages will show the public URL in the deployment environment; it will usually be `https://<your-github-username>.github.io/conveyor-engineering-viewer/`.
+The public site does not include the original STEP source. To regenerate the GLB locally, install the development dependencies and run:
 
-The GitHub Pages build uses a repository subpath. For Netlify Drop instead, use a root-path build (`vite build --base=/`) because the prebuilt GitHub Pages assets use `/conveyor-engineering-viewer/` URLs.
+```powershell
+npm run convert:model -- "E:\path\to\Roller.STEP"
+```
+
+The script writes `public/models/roller-assembly.glb`. It reads component geometry and occurrence positions from the STEP file and keeps the original source file on your computer. Mesh tessellation settings and part color mapping are in `scripts/convert-step.cjs`.
 
 ## Viewer controls
 
-- Drag with the left mouse button to orbit.
-- Scroll to zoom.
-- Drag with the right mouse button to pan.
-- Click a component in the viewport or parts list to select it and view its properties.
-- Use the eye icon by a part to hide or show it.
-- Use **EXPLODE** or the slider to separate end components along the roller axis.
-- Use **SECTION** to change the shell cutaway opening, and **WIREFRAME** to inspect mesh structure.
-- Edit length, shell diameter, and shaft diameter in **DIMENSIONS**, then press **APPLY DIMENSIONS**.
-- **RESET VIEW** restores the default camera and assembled state.
+- Left drag: orbit.
+- Scroll: zoom.
+- Right drag: pan.
+- Click a model part or component row: inspect source component and mesh envelope.
+- Eye icon: hide or show every occurrence of a component type.
+- Explode slider or **EXPLODE**: move between assembled and STEP exploded positions.
+- **ASSEMBLE**: return all components to their assembled locations.
+- **WIREFRAME**: show tessellated mesh edges.
+- **RESET VIEW**: restore the default exploded view and camera.
 
-## Editable parameter ranges
+## GitHub Pages
 
-All dimensions are millimeters. Defaults are 420 mm shell length, 89 mm shell outside diameter, and 20 mm shaft diameter. UI limits are 180–900 mm, 50–180 mm, and 12–30 mm respectively. Dimensions are demonstrator values inferred from the image, not manufacturing drawings or a tolerance-qualified design. Bearing race/ball geometry, seal profile, housing form, and shield details are illustrative.
-
-Main geometry and parameters live in `src/main.js`; layout and styling live in `src/style.css`.
+The repository deploys from GitHub Actions. Push changes to `main`; the `Deploy to GitHub Pages` workflow builds the Vite site and publishes its `dist` folder. The deployed viewer uses the repository subpath `/conveyor-engineering-viewer/`.
 
 ## Minimal manual test checklist
 
-- [ ] `npm install` completes and `npm run dev` serves the viewer.
-- [ ] The assembly appears with a green cutaway shell, central shaft, red seals, bearings, black housing, and outer black shields.
-- [ ] Orbit, zoom, and pan respond to mouse input.
-- [ ] Clicking each part or its list row highlights it and displays its properties.
-- [ ] Eye icons hide and restore individual groups.
-- [ ] Explode slider separates components and returns smoothly at 0%.
-- [ ] SECTION and WIREFRAME toggle their display modes.
-- [ ] Applying new dimensions rebuilds the model; reset parameters restores defaults.
+- [ ] `npm install` and `npm run dev` work on Windows.
+- [ ] The actual STEP derived roller model loads with the shell, shaft, bearing, seals, housing, snap rings, and end shields.
+- [ ] Orbit, zoom, and pan respond.
+- [ ] Clicking geometry and component list rows shows the component properties and envelope.
+- [ ] Visibility toggles affect all matching instances.
+- [ ] The slider smoothly transitions between the compact assembly and original STEP exploded layout.
+- [ ] Assemble, reset view, and wireframe controls work.
 - [ ] `npm run build` completes successfully.
+
