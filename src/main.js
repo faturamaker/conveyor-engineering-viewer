@@ -173,8 +173,6 @@ function setShellType(value) {
       materials.forEach((material) => material.color?.set(shellType.color));
     });
   }
-  document.querySelector('#shell-color-swatch').style.backgroundColor = shellType.color;
-  document.querySelector('#shell-color-name').textContent = shellType.colorName;
   renderPartList();
   if (selectedId === 'shell') selectPart('shell');
 }
