@@ -88,7 +88,7 @@ function cameraFit() {
   const bounds = new THREE.Box3().setFromObject(assembly);
   const center = bounds.getCenter(new THREE.Vector3());
   const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-  const distance = Math.max(20, sphere.radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.23);
+  const distance = Math.max(20, sphere.radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2)) * 0.92);
   const direction = new THREE.Vector3(1, 0.62, 1.25).normalize();
   camera.position.copy(center).addScaledVector(direction, distance);
   controls.target.copy(center);
