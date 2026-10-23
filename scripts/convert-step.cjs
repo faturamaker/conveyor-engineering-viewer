@@ -130,7 +130,8 @@ function writeGlb(gltf, binary) {
   const bufferViews = [];
   const accessors = [];
   const gltfMeshes = [];
-  const nodes = [{ name: 'Roller assembly', translation: [0, -centerY, 0], scale: [0.1, 0.1, 0.1], children: [], extras: {
+  // glTF node translation is applied after its scale, so store this center offset in scene units.
+  const nodes = [{ name: 'Roller assembly', translation: [0, -centerY * 0.1, 0], scale: [0.1, 0.1, 0.1], children: [], extras: {
     source: 'Roller.STEP', unit: 'mm', componentCount: components.length,
     shellLength: shell.bounds.max[0] - shell.bounds.min[0],
     shellDiameter: Math.max(shell.bounds.max[1] - shell.bounds.min[1], shell.bounds.max[2] - shell.bounds.min[2]),
