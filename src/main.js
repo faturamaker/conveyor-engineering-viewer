@@ -13,6 +13,14 @@ const definitions = [
   { id: 'shield', name: 'Extended shields', sub: 'END SHIELD · OUTER', color: '#111513', material: 'End shield (STEP appearance)', position: 'Both ends' },
 ];
 const byId = new Map(definitions.map((part) => [part.id, part]));
+const shellTypes = {
+  'hdpe-std': { label: 'HDPE Std', colorName: 'Green', color: '#00b050' },
+  'eco-hdpe': { label: 'Eco HDPE', colorName: 'Gray', color: '#a6a6a6' },
+  'fr-hdpe': { label: 'FR HDPE', colorName: 'Brown', color: '#984807' },
+  'fras-hdpe': { label: 'Fras HDPE', colorName: 'Red', color: '#ff0000' },
+  'uhmw-tube': { label: 'UHMW Tube', colorName: 'Blue', color: '#0070c0' },
+};
+let activeShellType = shellTypes['hdpe-std'];
 const componentList = document.querySelector('#component-list');
 const viewport = document.querySelector('#viewport');
 const scene = new THREE.Scene();
@@ -140,7 +148,8 @@ function selectPart(id) {
   const instanceBoxes = groups.map((group) => meshBounds(group));
   const envelope = instanceBoxes.reduce((max, size) => new THREE.Vector3(Math.max(max.x, size.x), Math.max(max.y, size.y), Math.max(max.z, size.z)), new THREE.Vector3());
   const dimensions = [envelope.x, envelope.y, envelope.z].sort((a, b) => b - a).map((value) => `${value.toFixed(1)}`).join(' × ');
-  document.querySelector('#properties-content').innerHTML = `<div class="property-header"><i class="property-color" style="background:${part.color}"></i><span><strong>${part.name}</strong><small>${part.sub}</small></span></div><div class="property-table"><span>Source</span><b>Roller.STEP</b><span>Component</span><b>${part.material}</b><span>Position</span><b>${part.position}</b><span>Envelope / instance</span><b>${dimensions} mm</b><span>Instances</span><b>${groups.length}</b></div>`;
+  const materialName = id === 'shell' ? activeShellType.label : part.material;
+  document.querySelector('#properties-content').innerHTML = `<div class="property-header"><i class="property-color" style="background:${part.color}"></i><span><strong>${part.name}</strong><small>${part.sub}</small></span></div><div class="property-table"><span>Source</span><b>Roller.STEP</b><span>Component</span><b>${materialName}</b><span>Position</span><b>${part.position}</b><span>Envelope / instance</span><b>${dimensions} mm</b><span>Instances</span><b>${groups.length}</b></div>`;
   document.querySelector('#status-selection').textContent = `SELECTED · ${part.name.toUpperCase()}`;
   const toast = document.querySelector('#selection-toast');
   toast.textContent = `${part.name.toUpperCase()}  /  ${groups.length} INSTANCE${groups.length === 1 ? '' : 'S'}`;
@@ -148,6 +157,26 @@ function selectPart(id) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200);
   renderPartList();
+}
+
+function setShellType(value) {
+  const shellType = shellTypes[value] || shellTypes['hdpe-std'];
+  activeShellType = shellType;
+  const shell = byId.get('shell');
+  shell.color = shellType.color;
+  shell.material = shellType.label;
+  shell.sub = `${shellType.label.toUpperCase()} · ${shellType.colorName.toUpperCase()}`;
+  for (const group of partGroups.get('shell') || []) {
+    group.traverse((object) => {
+      if (!object.isMesh) return;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach((material) => material.color?.set(shellType.color));
+    });
+  }
+  document.querySelector('#shell-color-swatch').style.backgroundColor = shellType.color;
+  document.querySelector('#shell-color-name').textContent = shellType.colorName;
+  renderPartList();
+  if (selectedId === 'shell') selectPart('shell');
 }
 
 function resetSelection() {
@@ -180,6 +209,7 @@ function loadModel() {
       const partId = parent?.userData?.partId;
       if (partId && partGroups.has(partId) && !partGroups.get(partId).includes(parent)) partGroups.get(partId).push(parent);
     });
+    setShellType(document.querySelector('#shell-type').value);
     const info = gltf.scene.children[0]?.userData || {};
     document.querySelector('#cad-shell-length').textContent = `${Number(info.shellLength).toFixed(1)} mm`;
     document.querySelector('#cad-shell-diameter').textContent = `${Number(info.shellDiameter).toFixed(1)} mm`;
@@ -234,6 +264,7 @@ document.querySelector('#wire-button').addEventListener('click', (event) => {
   assembly.traverse((object) => { if (object.isMesh) object.material.wireframe = wireframe; });
   event.currentTarget.classList.toggle('selected', wireframe);
 });
+document.querySelector('#shell-type').addEventListener('change', (event) => setShellType(event.target.value));
 document.querySelector('#view-cube').addEventListener('click', () => document.querySelector('#reset-view').click());
 
 const modal = document.querySelector('#help-modal');
