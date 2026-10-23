@@ -11,7 +11,7 @@
     <div id="app">
       <header class="topbar">
         <a class="brand" href="#" aria-label="Composite HDPE Roller Viewer">
-          <span class="brand-logos"><img src="./branding/technoroll-ccr.svg" alt="Technoroll CCR"><img src="./branding/supra.svg" alt="Supra"></span>
+          <span class="brand-logos"><img src="./branding/technoroll-ccr-hd.svg" alt="Technoroll CCR"><img src="./branding/supra.svg" alt="Supra"></span>
         </a>
         <div class="brand-copy"><strong>Composite HDPE Roller Viewer</strong></div>
         <div class="header-actions"><div class="top-meta"><span class="status-dot"></span> STEP ASSEMBLY <span class="meta-sep">/</span> REV 02</div>
@@ -20,13 +20,8 @@
 
       <main class="workspace">
         <aside class="sidebar">
-          <section class="section-block">
-            <div class="section-title"><span>PARTS</span><span id="part-count">12 INSTANCES</span></div>
-            <div id="component-list" class="component-list"></div>
-          </section>
-
           <section class="section-block shell-type-block">
-            <div class="section-title"><span>SHELL TYPE</span><span>COLOR OPTIONS</span></div>
+            <div class="section-title"><span>SHELL TYPE</span></div>
             <label class="shell-select-label" for="shell-type">Tube material</label>
             <select id="shell-type" class="shell-type-select" aria-label="Pilih tipe shell">
               <option value="hdpe-std">HDPE Std · Green</option>
@@ -36,29 +31,18 @@
               <option value="uhmw-tube">UHMW Tube · Blue</option>
             </select>
           </section>
-
-          <section class="section-block parameters-block cad-block">
-            <div class="section-title"><span>IMPORTED CAD MODEL</span><span>STEP · MM</span></div>
-            <div class="cad-stat"><span>Shell length</span><strong id="cad-shell-length">416 mm</strong></div>
-            <div class="cad-stat"><span>Shell diameter</span><strong id="cad-shell-diameter">128 mm</strong></div>
-            <div class="cad-stat"><span>Part instances</span><strong id="cad-instance-count">12</strong></div>
-            <p class="cad-note">Geometry imported from Roller.STEP. The source STEP file is not included in the public site.</p>
+          <section class="section-block">
+            <div class="section-title"><span>PARTS</span></div>
+            <div id="component-list" class="component-list"></div>
           </section>
-
-          <section class="section-block properties-block">
-            <div class="section-title"><span>SELECTED PART</span><span class="live-indicator">LIVE</span></div>
-            <div id="properties-content" class="properties-content"><div class="empty-selection"><span class="crosshair">⌖</span><span>Pilih komponen untuk melihat<br>detail dan dimensinya.</span></div></div>
-          </section>
-
-          <div class="sidebar-footer"><span>GEOMETRY FROM ROLLER.STEP</span><span class="footer-mark">●</span></div>
+          <div class="sidebar-footer"><span>Viewer App By. FR</span></div>
         </aside>
 
         <section class="viewport-panel" aria-label="3D assembly viewport">
           <div id="viewport" class="viewport"></div>
-          <div class="viewport-overlay overlay-top"><div class="view-label"><span class="view-dot"></span><span id="view-mode">EXPLODED VIEW · STEP</span></div><div class="axis-indicator"><span>X</span><span>Y</span><span>Z</span></div></div>
+          <div class="viewport-overlay overlay-top"><div class="view-label"><span class="view-dot"></span><span id="view-mode">EXPLODED VIEW · STEP</span></div></div>
           <div class="viewport-overlay overlay-bottom-left"><span class="hint-key">DRAG</span> ORBIT <i></i><span class="hint-key">SCROLL</span> ZOOM <i></i><span class="hint-key">RIGHT DRAG</span> PAN</div>
-          <div class="viewport-overlay overlay-bottom-right"><span id="scale-readout">CAD · 1:1</span><span class="units-pill">MM</span></div>
-          <div class="view-cube" id="view-cube" title="Reset camera"><div class="cube-face cube-front">FRONT</div><div class="cube-face cube-top">TOP</div><div class="cube-face cube-side">SIDE</div></div>
+          
           <div id="selection-toast" class="selection-toast"></div>
           <div id="loading" class="loading"><span class="loader"></span><span>LOADING CAD ASSEMBLY</span></div>
           <div class="toolbar">
@@ -68,7 +52,7 @@
           </div>
         </section>
       </main>
-      <footer class="statusbar"><span><span class="status-dot"></span> CAD READY</span><span id="status-selection">NO PART SELECTED</span><span>STEP DERIVED MESH <b>·</b> THREE.JS</span></footer>
+      <footer class="statusbar"><span><span class="status-dot"></span> CAD READY</span></footer>
       <div id="help-modal" class="modal-backdrop"><div class="help-modal"><button id="close-help" class="close-button">×</button><span class="eyebrow">VIEWER CONTROLS</span><h2>Navigate the assembly</h2><div class="help-row"><kbd>Left drag</kbd><span>Orbit around model</span></div><div class="help-row"><kbd>Scroll</kbd><span>Zoom in and out</span></div><div class="help-row"><kbd>Right drag</kbd><span>Pan the camera</span></div><div class="help-row"><kbd>Click part</kbd><span>Select a component and inspect properties</span></div><button id="got-it" class="apply-button">GOT IT <span>↗</span></button></div></div>
     </div>
     <script type="module" src="/src/main.js"></script>
