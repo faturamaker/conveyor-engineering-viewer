@@ -6,8 +6,15 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "convert:model": "node scripts/convert-step.cjs"
   },
-  "dependencies": { "three": "^0.180.0" },
-  "devDependencies": { "vite": "^7.1.7" }
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "occt-import-js": "0.0.23",
+    "vite": "^7.1.7"
+  }
 }
+
