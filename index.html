@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#101615" />
     <meta name="description" content="Interactive parametric conveyor roller engineering viewer" />
-    <title>Conveyor Engineering Viewer</title>
+    <title>Composite HDPE Roller Viewer</title>
   </head>
   <body>
     <div id="app">
       <header class="topbar">
-        <a class="brand" href="#" aria-label="Conveyor Lab home">
-          <span class="brand-mark">C<span>3D</span></span>
-          <span class="brand-copy"><strong>CONVEYOR LAB</strong><small>ENGINEERING VIEWER</small></span>
+        <a class="brand" href="#" aria-label="Composite HDPE Roller Viewer">
+          <span class="brand-logos"><img src="./branding/technoroll-ccr.svg" alt="Technoroll CCR"><img src="./branding/supra.svg" alt="Supra"></span>
+          <span class="brand-copy"><strong>Composite HDPE Roller Viewer</strong><small>ENGINEERING VIEWER · CCR SEA</small></span>
         </a>
         <div class="top-meta"><span class="status-dot"></span> STEP ASSEMBLY <span class="meta-sep">/</span> REV 02</div>
         <button id="help-button" class="icon-button" title="Bantuan kontrol" aria-label="Bantuan">?</button>
@@ -25,6 +25,19 @@
           <section class="section-block">
             <div class="section-title"><span>PARTS</span><span id="part-count">12 INSTANCES</span></div>
             <div id="component-list" class="component-list"></div>
+          </section>
+
+          <section class="section-block shell-type-block">
+            <div class="section-title"><span>SHELL TYPE</span><span>COLOR OPTIONS</span></div>
+            <label class="shell-select-label" for="shell-type">Tube material</label>
+            <select id="shell-type" class="shell-type-select" aria-label="Pilih tipe shell">
+              <option value="hdpe-std">HDPE Std · Green</option>
+              <option value="eco-hdpe">Eco HDPE · Gray</option>
+              <option value="fr-hdpe">FR HDPE · Brown</option>
+              <option value="fras-hdpe">Fras HDPE · Red</option>
+              <option value="uhmw-tube">UHMW Tube · Blue</option>
+            </select>
+            <div class="shell-color-readout"><span id="shell-color-swatch"></span><span>Shell color</span><strong id="shell-color-name">Green</strong></div>
           </section>
 
           <section class="section-block parameters-block cad-block">
