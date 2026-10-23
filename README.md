@@ -1,4 +1,4 @@
-# Conveyor Engineering Viewer
+# Composite HDPE Roller Viewer
 
 Browser based Three.js viewer for the roller assembly in `Roller.STEP`. The site uses triangulated component geometry imported from the supplied CAD assembly. The STEP file's component positions already define an orderly one end exploded arrangement; the viewer preserves those positions and provides a slider to interpolate back to the assembled state.
 
@@ -6,6 +6,7 @@ Browser based Three.js viewer for the roller assembly in `Roller.STEP`. The site
 
 - STEP derived geometry grouped into 12 selectable component instances: shell, shaft, two SKF 6205 bearings, two seals, two housings, two SnapRing S25 rings, and two end shields.
 - Orbit, zoom, pan, component selection, visibility toggles, wireframe, and animated exploded assembly slider.
+- TechnoRoll CCR and Supra logos in the header, with selectable shell grades that recolor the STEP derived shell tube: HDPE Std (green), Eco HDPE (gray), FR HDPE (brown), Fras HDPE (red), and UHMW Tube (blue).
 - CAD sourced dimensions and per-instance mesh envelopes. The original STEP file and any manufacturing tolerances are not included in this public repository.
 - Source converter at `scripts/convert-step.cjs`; generated web model at `public/models/roller-assembly.glb`.
 
@@ -43,6 +44,7 @@ The script writes `public/models/roller-assembly.glb`. It reads component geomet
 - Scroll: zoom.
 - Right drag: pan.
 - Click a model part or component row: inspect source component and mesh envelope.
+- **SHELL TYPE** dropdown: change the shell tube color and displayed material grade.
 - Eye icon: hide or show every occurrence of a component type.
 - Explode slider or **EXPLODE**: move between assembled and STEP exploded positions.
 - **ASSEMBLE**: return all components to their assembled locations.
