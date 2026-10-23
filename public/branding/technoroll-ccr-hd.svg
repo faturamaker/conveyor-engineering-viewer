@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 100" role="img" aria-labelledby="title">
+  <title id="title">TechnoRoll CCR</title>
+  <rect width="650" height="100" fill="#fff"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="900" letter-spacing="-3.5">
+    <text x="3" y="78" fill="#080808">TECHN<tspan fill="#08a6d5">O</tspan>R<tspan fill="#20a522">O</tspan>LL</text>
+    <text x="455" y="78" fill="#23a522">CCR</text>
+  </g>
+</svg>
+
