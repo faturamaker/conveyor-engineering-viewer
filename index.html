@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101615" />
+    <meta name="description" content="Interactive parametric conveyor roller engineering viewer" />
+    <title>Conveyor Engineering Viewer</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Conveyor Lab home">
+          <span class="brand-mark">C<span>3D</span></span>
+          <span class="brand-copy"><strong>CONVEYOR LAB</strong><small>ENGINEERING VIEWER</small></span>
+        </a>
+        <div class="top-meta"><span class="status-dot"></span> PARAMETRIC ASSEMBLY <span class="meta-sep">/</span> REV 01</div>
+        <button id="help-button" class="icon-button" title="Bantuan kontrol" aria-label="Bantuan">?</button>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <div class="panel-heading"><div><span class="eyebrow">ASSEMBLY CONFIGURATION</span><h1>Roller assembly</h1></div><span class="rev-tag">01</span></div>
+
+          <section class="section-block">
+            <div class="section-title"><span>PARTS</span><span id="part-count">06 COMPONENTS</span></div>
+            <div id="component-list" class="component-list"></div>
+          </section>
+
+          <section class="section-block parameters-block">
+            <div class="section-title"><span>DIMENSIONS</span><button id="reset-parameters" class="text-button">RESET</button></div>
+            <label class="parameter-row"><span>Shell length <em>L</em></span><span class="input-wrap"><input id="length-input" type="number" min="180" max="900" step="10" value="420"><small>mm</small></span></label>
+            <label class="parameter-row"><span>Shell diameter <em>Ø</em></span><span class="input-wrap"><input id="diameter-input" type="number" min="50" max="180" step="5" value="89"><small>mm</small></span></label>
+            <label class="parameter-row"><span>Shaft diameter <em>d</em></span><span class="input-wrap"><input id="shaft-input" type="number" min="12" max="30" step="1" value="20"><small>mm</small></span></label>
+            <button id="apply-dimensions" class="apply-button">APPLY DIMENSIONS <span>↗</span></button>
+          </section>
+
+          <section class="section-block properties-block">
+            <div class="section-title"><span>SELECTED PART</span><span class="live-indicator">LIVE</span></div>
+            <div id="properties-content" class="properties-content"><div class="empty-selection"><span class="crosshair">⌖</span><span>Pilih komponen untuk melihat<br>detail dan dimensinya.</span></div></div>
+          </section>
+
+          <div class="sidebar-footer"><span>MODEL GENERATED FROM PARAMETERS</span><span class="footer-mark">●</span></div>
+        </aside>
+
+        <section class="viewport-panel" aria-label="3D assembly viewport">
+          <div id="viewport" class="viewport"></div>
+          <div class="viewport-overlay overlay-top"><div class="view-label"><span class="view-dot"></span><span id="view-mode">ASSEMBLY VIEW</span></div><div class="axis-indicator"><span>X</span><span>Y</span><span>Z</span></div></div>
+          <div class="viewport-overlay overlay-bottom-left"><span class="hint-key">DRAG</span> ORBIT <i></i><span class="hint-key">SCROLL</span> ZOOM <i></i><span class="hint-key">RIGHT DRAG</span> PAN</div>
+          <div class="viewport-overlay overlay-bottom-right"><span id="scale-readout">SCALE 1:1</span><span class="units-pill">MM</span></div>
+          <div class="view-cube" id="view-cube" title="Reset camera"><div class="cube-face cube-front">FRONT</div><div class="cube-face cube-top">TOP</div><div class="cube-face cube-side">SIDE</div></div>
+          <div id="selection-toast" class="selection-toast"></div>
+          <div id="loading" class="loading"><span class="loader"></span><span>BUILDING ASSEMBLY</span></div>
+          <div class="toolbar">
+            <div class="tool-group"><button id="explode-button" class="tool-button" title="Aktifkan exploded view"><span class="tool-icon">⤢</span><span>EXPLODE</span></button><button id="reset-view" class="tool-button" title="Reset tampilan"><span class="tool-icon">↺</span><span>RESET VIEW</span></button></div>
+            <div class="explode-control"><label for="explode-range">EXPLODE</label><input id="explode-range" type="range" min="0" max="100" value="0"><span id="explode-value">0%</span></div>
+            <div class="tool-group"><button id="section-button" class="tool-button" title="Tampilkan potongan shell"><span class="tool-icon">◧</span><span>SECTION</span></button><button id="wire-button" class="tool-button" title="Tampilkan wireframe"><span class="tool-icon">◇</span><span>WIREFRAME</span></button></div>
+          </div>
+        </section>
+      </main>
+      <footer class="statusbar"><span><span class="status-dot"></span> READY</span><span id="status-selection">NO PART SELECTED</span><span>THREE.JS <b>·</b> WEBGL</span></footer>
+      <div id="help-modal" class="modal-backdrop"><div class="help-modal"><button id="close-help" class="close-button">×</button><span class="eyebrow">VIEWER CONTROLS</span><h2>Navigate the assembly</h2><div class="help-row"><kbd>Left drag</kbd><span>Orbit around model</span></div><div class="help-row"><kbd>Scroll</kbd><span>Zoom in and out</span></div><div class="help-row"><kbd>Right drag</kbd><span>Pan the camera</span></div><div class="help-row"><kbd>Click part</kbd><span>Select a component and inspect properties</span></div><button id="got-it" class="apply-button">GOT IT <span>↗</span></button></div></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
