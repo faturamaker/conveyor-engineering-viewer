@@ -180,7 +180,7 @@ function loadModel() {
       const partId = parent?.userData?.partId;
       if (partId && partGroups.has(partId) && !partGroups.get(partId).includes(parent)) partGroups.get(partId).push(parent);
     });
-    const info = gltf.scene.userData;
+    const info = gltf.scene.children[0]?.userData || {};
     document.querySelector('#cad-shell-length').textContent = `${Number(info.shellLength).toFixed(1)} mm`;
     document.querySelector('#cad-shell-diameter').textContent = `${Number(info.shellDiameter).toFixed(1)} mm`;
     document.querySelector('#cad-instance-count').textContent = String(info.componentCount);
