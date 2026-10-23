@@ -121,12 +121,14 @@ function setExplode(value) {
 }
 
 function renderPartList() {
-  const glyphs = { shell: '▱', shaft: '━', bearing: '◎', seal: '◉', housing: '▣', snapring: '○', shield: '◧' };
   componentList.innerHTML = definitions.map((part) => {
     const groups = partGroups.get(part.id) || [];
     const visible = groups.some((group) => group.visible);
     const count = groups.length;
-    return `<div class="component-row${selectedId === part.id ? ' active' : ''}" data-id="${part.id}"><span class="part-icon" style="--part-color:${part.color}"><svg viewBox="0 0 20 20"><text x="2" y="15" fill="currentColor" stroke="none" font-size="14">${glyphs[part.id]}</text></svg></span><span><span class="part-name">${part.name}<small class="instance-count"> ×${count}</small></span><span class="part-sub">${part.sub}</span></span><button class="eye-button${visible ? '' : ' hidden'}" data-eye="${part.id}" title="Toggle visibility">◉</button></div>`;
+    const eye = visible
+      ? '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.5 10s3-5.5 8.5-5.5 8.5 5.5 8.5 5.5-3 5.5-8.5 5.5S1.5 10 1.5 10Z"/><circle cx="10" cy="10" r="2.5"/></svg>'
+      : '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 2l16 16M8.2 4.8A8.4 8.4 0 0 1 10 4.5c5.5 0 8.5 5.5 8.5 5.5a13 13 0 0 1-2.2 2.7M5.1 5.3C2.7 6.8 1.5 10 1.5 10S4.5 15.5 10 15.5c.9 0 1.7-.2 2.5-.5"/><circle cx="10" cy="10" r="2.5"/></svg>';
+    return `<div class="component-row${selectedId === part.id ? ' active' : ''}" data-id="${part.id}"><span class="part-name">${part.name}<small class="instance-count">×${count}</small></span><button class="eye-button${visible ? '' : ' hidden'}" data-eye="${part.id}" aria-label="${visible ? 'Sembunyikan' : 'Tampilkan'} ${part.name}" title="${visible ? 'Sembunyikan part' : 'Tampilkan part'}">${eye}</button></div>`;
   }).join('');
   componentList.querySelectorAll('.component-row').forEach((row) => row.addEventListener('click', (event) => {
     if (!event.target.closest('.eye-button')) selectPart(row.dataset.id);
@@ -145,12 +147,6 @@ function selectPart(id) {
   const groups = partGroups.get(id) || [];
   if (!part || !groups.length) return;
   selectedId = id;
-  const instanceBoxes = groups.map((group) => meshBounds(group));
-  const envelope = instanceBoxes.reduce((max, size) => new THREE.Vector3(Math.max(max.x, size.x), Math.max(max.y, size.y), Math.max(max.z, size.z)), new THREE.Vector3());
-  const dimensions = [envelope.x, envelope.y, envelope.z].sort((a, b) => b - a).map((value) => `${value.toFixed(1)}`).join(' × ');
-  const materialName = id === 'shell' ? activeShellType.label : part.material;
-  document.querySelector('#properties-content').innerHTML = `<div class="property-header"><i class="property-color" style="background:${part.color}"></i><span><strong>${part.name}</strong><small>${part.sub}</small></span></div><div class="property-table"><span>Source</span><b>Roller.STEP</b><span>Component</span><b>${materialName}</b><span>Position</span><b>${part.position}</b><span>Envelope / instance</span><b>${dimensions} mm</b><span>Instances</span><b>${groups.length}</b></div>`;
-  document.querySelector('#status-selection').textContent = `SELECTED · ${part.name.toUpperCase()}`;
   const toast = document.querySelector('#selection-toast');
   toast.textContent = `${part.name.toUpperCase()}  /  ${groups.length} INSTANCE${groups.length === 1 ? '' : 'S'}`;
   toast.classList.add('visible');
@@ -179,8 +175,6 @@ function setShellType(value) {
 
 function resetSelection() {
   selectedId = null;
-  document.querySelector('#properties-content').innerHTML = '<div class="empty-selection"><span class="crosshair">⌖</span><span>Pilih komponen untuk melihat<br>detail dan dimensinya.</span></div>';
-  document.querySelector('#status-selection').textContent = 'NO PART SELECTED';
   renderPartList();
 }
 
@@ -208,11 +202,6 @@ function loadModel() {
       if (partId && partGroups.has(partId) && !partGroups.get(partId).includes(parent)) partGroups.get(partId).push(parent);
     });
     setShellType(document.querySelector('#shell-type').value);
-    const info = gltf.scene.children[0]?.userData || {};
-    document.querySelector('#cad-shell-length').textContent = `${Number(info.shellLength).toFixed(1)} mm`;
-    document.querySelector('#cad-shell-diameter').textContent = `${Number(info.shellDiameter).toFixed(1)} mm`;
-    document.querySelector('#cad-instance-count').textContent = String(info.componentCount);
-    document.querySelector('#part-count').textContent = `${info.componentCount} INSTANCES`;
     renderPartList();
     setExplode(100);
     cameraFit();
@@ -263,8 +252,6 @@ document.querySelector('#wire-button').addEventListener('click', (event) => {
   event.currentTarget.classList.toggle('selected', wireframe);
 });
 document.querySelector('#shell-type').addEventListener('change', (event) => setShellType(event.target.value));
-document.querySelector('#view-cube').addEventListener('click', () => document.querySelector('#reset-view').click());
-
 const modal = document.querySelector('#help-modal');
 document.querySelector('#help-button').addEventListener('click', () => modal.classList.add('open'));
 document.querySelector('#close-help').addEventListener('click', () => modal.classList.remove('open'));
