@@ -5,7 +5,7 @@ import './style.css';
 const defaults = { length: 420, diameter: 89, shaft: 20 };
 const params = { ...defaults };
 const mm = (value) => value / 10; // Display parameters in mm; scene scale is 1 unit = 10 mm.
-const colors = { shell: '#20d447', shaft: '#bac5c1', bearing: '#b9c3c0', seal: '#f12c2d', housing: '#252a28', shield: '#101412' };
+const colors = { shell: '#25c34a', shaft: '#bac5c1', bearing: '#b9c3c0', seal: '#f12c2d', housing: '#252a28', shield: '#101412' };
 const parts = [
   { id: 'shell', name: 'Shell', sub: 'ROLLER TUBE · GREEN', label: 'Shell', material: 'Powder coated steel', position: 'Center', color: colors.shell, dims: () => `Ø ${params.diameter} × ${params.length} mm`, mass: '3.82 kg' },
   { id: 'shaft', name: 'Shaft', sub: 'SOLID STEEL · CENTER', label: 'Shaft', material: 'Carbon steel', position: 'Through axis', color: colors.shaft, dims: () => `Ø ${params.shaft} × ${params.length + 74} mm`, mass: '1.14 kg' },
@@ -20,12 +20,12 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color('#1a211f');
 scene.fog = new THREE.Fog('#1a211f', 100, 300);
 const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 500);
-camera.position.set(61, 46, 66);
+camera.position.set(54, 42, 58);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.18;
+renderer.toneMappingExposure = 1.02;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 viewport.appendChild(renderer.domElement);
@@ -36,17 +36,17 @@ controls.target.set(0, 0, 0);
 controls.minDistance = 23;
 controls.maxDistance = 180;
 controls.maxPolarAngle = Math.PI * .88;
-scene.add(new THREE.HemisphereLight('#d9ebdd', '#232c28', 2.15));
-const keyLight = new THREE.DirectionalLight('#fff6e8', 3.1); keyLight.position.set(24, 38, 24); keyLight.castShadow = true; keyLight.shadow.mapSize.set(1024, 1024); scene.add(keyLight);
-const fillLight = new THREE.DirectionalLight('#a4c8ff', 1.4); fillLight.position.set(-26, 12, -18); scene.add(fillLight);
-const rimLight = new THREE.DirectionalLight('#a4ff83', 1.45); rimLight.position.set(-5, 8, 34); scene.add(rimLight);
+scene.add(new THREE.HemisphereLight('#d9ebdd', '#232c28', 1.35));
+const keyLight = new THREE.DirectionalLight('#fff6e8', 2.1); keyLight.position.set(24, 38, 24); keyLight.castShadow = true; keyLight.shadow.mapSize.set(1024, 1024); scene.add(keyLight);
+const fillLight = new THREE.DirectionalLight('#a4c8ff', .95); fillLight.position.set(-26, 12, -18); scene.add(fillLight);
+const rimLight = new THREE.DirectionalLight('#a4ff83', .8); rimLight.position.set(-5, 8, 34); scene.add(rimLight);
 
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), new THREE.MeshStandardMaterial({ color: '#19201d', roughness: .88 }));
 floor.rotation.x = -Math.PI / 2; floor.position.y = -11; floor.receiveShadow = true; scene.add(floor);
 const grid = new THREE.GridHelper(240, 40, '#39453e', '#29332e'); grid.position.y = -10.96; grid.material.transparent = true; grid.material.opacity = .45; scene.add(grid);
 const assembly = new THREE.Group(); scene.add(assembly);
 const partsMap = new Map();
-let selectedId = null, exploded = 0, sectionOn = false, wireOn = false, toastTimer;
+let selectedId = null, exploded = 0, sectionOn = true, wireOn = false, toastTimer;
 const mat = (color, roughness = .35, metalness = .15) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
 const materials = {
   shell: mat(colors.shell, .28, .28), shaft: mat(colors.shaft, .24, .82), bearing: mat(colors.bearing, .2, .8), seal: mat(colors.seal, .35, .12),
@@ -71,7 +71,9 @@ function buildAssembly() {
   const group = (id, x = 0) => { const g = new THREE.Group(); g.name = id; g.position.x = x; g.userData.partId = id; assembly.add(g); partsMap.set(id, g); return g; };
   const shell = group('shell');
   // Cutaway is a longitudinal sector: the shell wall remains visible over most of its circumference.
-  const shellGeo = new THREE.CylinderGeometry(R, R, L, 96, 1, true, sectionOn ? Math.PI * .20 : 0, sectionOn ? Math.PI * 1.60 : Math.PI * 2);
+  // Omit the 63° sector aimed toward the default camera so the internal parts are visible immediately.
+  const cutawayStart = Math.PI * .35;
+  const shellGeo = new THREE.CylinderGeometry(R, R, L, 96, 1, true, sectionOn ? cutawayStart : 0, sectionOn ? Math.PI * 1.65 : Math.PI * 2);
   shellGeo.rotateZ(Math.PI / 2);
   addPartMesh('shell', shellGeo, materials.shell, shell, 'Shell tube');
   const rimMat = mat('#168b31', .28, .25);
@@ -79,12 +81,12 @@ function buildAssembly() {
     const rim = torus(R - .32, .32, rimMat); rim.position.x = side * L / 2; addPartMesh('shell', rim.geometry, rim.material, shell, 'Shell end rim').position.copy(rim.position);
   }
   // Internal tie/reinforcement liner: subtly visible in the cutaway sector only.
-  const liner = new THREE.Mesh(new THREE.CylinderGeometry(R - 1.2, R - 1.2, L * .55, 64, 1, true, Math.PI * .20, Math.PI * 1.6), mat('#159b32', .55, .12));
+  const liner = new THREE.Mesh(new THREE.CylinderGeometry(R - 1.2, R - 1.2, L * .55, 64, 1, true, cutawayStart, Math.PI * 1.65), mat('#159b32', .55, .12));
   liner.rotation.z = Math.PI / 2; liner.userData.partId = 'shell'; shell.add(liner);
 
   const shaft = group('shaft');
   const shaftLength = L + mm(74);
-  addPartMesh('shaft', cyl(shaftR, shaftR, shaftLength, materials.shaft), shaft, shaft, 'Axle shaft');
+  addPartMesh('shaft', cyl(shaftR, shaftR, shaftLength, materials.shaft), materials.shaft, shaft, 'Axle shaft');
   // Small polished shaft ends and retaining grooves.
   for (const side of [-1, 1]) {
     const x = side * shaftLength / 2;
@@ -163,7 +165,7 @@ renderer.domElement.addEventListener('pointerdown', e => { downPos = { x: e.clie
 renderer.domElement.addEventListener('pointerup', e => { if (!downPos || Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) > 4) return; const rect = renderer.domElement.getBoundingClientRect(); pointer.set((e.clientX - rect.left) / rect.width * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1); raycaster.setFromCamera(pointer, camera); const hit = raycaster.intersectObjects(assembly.children, true).find(h => h.object.visible && h.object.userData.partId); if (hit) selectPart(hit.object.userData.partId); });
 document.querySelector('#explode-range').addEventListener('input', e => { exploded = Number(e.target.value); document.querySelector('#explode-value').textContent = `${exploded}%`; document.querySelector('#explode-button').classList.toggle('selected', exploded > 0); document.querySelector('#view-mode').textContent = exploded ? 'EXPLODED VIEW' : sectionOn ? 'SECTION VIEW' : 'ASSEMBLY VIEW'; applyExplode(); });
 document.querySelector('#explode-button').addEventListener('click', () => { exploded = exploded ? 0 : 100; document.querySelector('#explode-range').value = exploded; document.querySelector('#explode-range').dispatchEvent(new Event('input')); });
-document.querySelector('#reset-view').addEventListener('click', () => { camera.position.set(61, 46, 66); controls.target.set(0, 0, 0); controls.update(); exploded = 0; document.querySelector('#explode-range').value = 0; document.querySelector('#explode-range').dispatchEvent(new Event('input')); selectedId = null; document.querySelector('#properties-content').innerHTML = '<div class="empty-selection"><span class="crosshair">⌖</span><span>Pilih komponen untuk melihat<br>detail dan dimensinya.</span></div>'; document.querySelector('#status-selection').textContent = 'NO PART SELECTED'; renderPartList(); });
+document.querySelector('#reset-view').addEventListener('click', () => { camera.position.set(54, 42, 58); controls.target.set(0, 0, 0); controls.update(); exploded = 0; document.querySelector('#explode-range').value = 0; document.querySelector('#explode-range').dispatchEvent(new Event('input')); selectedId = null; document.querySelector('#properties-content').innerHTML = '<div class="empty-selection"><span class="crosshair">⌖</span><span>Pilih komponen untuk melihat<br>detail dan dimensinya.</span></div>'; document.querySelector('#status-selection').textContent = 'NO PART SELECTED'; renderPartList(); });
 document.querySelector('#section-button').addEventListener('click', e => { sectionOn = !sectionOn; e.currentTarget.classList.toggle('selected', sectionOn); document.querySelector('#view-mode').textContent = sectionOn ? 'SECTION VIEW' : exploded ? 'EXPLODED VIEW' : 'ASSEMBLY VIEW'; buildAssembly(); });
 document.querySelector('#wire-button').addEventListener('click', () => { wireOn = !wireOn; applyWireframe(); });
 document.querySelector('#view-cube').addEventListener('click', () => document.querySelector('#reset-view').click());
@@ -178,8 +180,9 @@ document.querySelector('#help-button').addEventListener('click', () => modal.cla
 document.querySelector('#close-help').addEventListener('click', () => modal.classList.remove('open'));
 document.querySelector('#got-it').addEventListener('click', () => modal.classList.remove('open'));
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
-renderPartList(); buildAssembly(); onResize(); window.addEventListener('resize', onResize);
+renderPartList(); buildAssembly(); document.querySelector('#section-button').classList.add('selected'); document.querySelector('#view-mode').textContent = 'CUTAWAY VIEW'; onResize(); window.addEventListener('resize', onResize);
 const observer = new ResizeObserver(onResize); observer.observe(viewport);
 function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
 animate();
 setTimeout(() => document.querySelector('#loading').classList.add('done'), 600);
+
